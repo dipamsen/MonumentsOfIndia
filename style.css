@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+}
+
+#map {
+  height: 90vh;
+}
+
+.image-marker {
+  height: 55px;
+  /* width: 55px; */
+}
