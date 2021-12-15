@@ -1,3 +1,5 @@
+let latitude, longitude, destination;
+
 const data = [
   {
     id: 1,
@@ -34,27 +36,50 @@ const data = [
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZGlwYW1zZW4iLCJhIjoiY2t4NHEzZGFrMHhqbzJvcWt1YW43bjU5bCJ9.3DZNA0EqHrBKdvJ36jwfCw";
 
-const map = new mapboxgl.Map({
-  container: "map",
-  style: "mapbox://styles/mapbox/streets-v11",
-  center: [78.9629, 20.5937],
-  zoom: 4,
+$(document).ready(function () {
+  if (navigator && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+      main();
+    });
+  } else {
+    alert("Browser unsupported.");
+  }
 });
 
-map.addControl(
-  new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl })
-);
+function main() {
+  const map = new mapboxgl.Map({
+    container: "map",
+    style: "mapbox://styles/mapbox/streets-v11",
+    center: [78.9629, 20.5937],
+    zoom: 4,
+  });
 
-const markers = [];
-data.forEach((mon) => {
-  const imageContainer = document.querySelector("#images");
-  const img = document.createElement("img");
-  img.src = "assets/" + mon.image;
-  img.classList.add("image-marker");
-  imageContainer.appendChild(img);
+  map.addControl(
+    new MapboxGeocoder({ accessToken: mapboxgl.accessToken, mapboxgl }).on(
+      "result",
+      (e) => (destination = e.result.center)
+    )
+  );
 
-  const marker = new mapboxgl.Marker({ element: img })
-    .setLngLat(mon.location)
-    .addTo(map);
-  markers.push(marker);
+  const markers = [];
+  data.forEach((mon) => {
+    const imageContainer = document.querySelector("#images");
+    const img = document.createElement("img");
+    img.src = "assets/" + mon.image;
+    img.classList.add("image-marker");
+    imageContainer.appendChild(img);
+
+    const marker = new mapboxgl.Marker({ element: img })
+      .setLngLat(mon.location)
+      .addTo(map);
+    markers.push(marker);
+  });
+}
+
+$(function () {
+  $("#weather-btn").click(function () {
+    window.location.href = `ar_weather.html?source=${latitude};${longitude}&destination=${destination[1]};${destination[0]}`;
+  });
 });
