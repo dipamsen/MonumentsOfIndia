@@ -80,6 +80,10 @@ function main() {
 
 $(function () {
   $("#weather-btn").click(function () {
-    window.location.href = `ar_weather.html?source=${latitude};${longitude}&destination=${destination[1]};${destination[0]}`;
+    if (destination) {
+      latitude = destination[1];
+      longitude = destination[0];
+    }
+    window.location.href = `ar_weather.html?source=${latitude};${longitude}`;
   });
 });
